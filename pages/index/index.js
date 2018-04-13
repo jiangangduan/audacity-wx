@@ -21,8 +21,9 @@ Page({
     nowWeatherBackground: ""
   },
   onPullDownRefresh(){
-    this.getNow()
-    wx.stopPullDownRefresh()   
+    this.getNow(() => {
+      wx.stopPullDownRefresh()
+    })    
   },
   onLoad() {
     this.getNow()
@@ -48,12 +49,11 @@ Page({
 
         wx.setNavigationBarColor({
           frontColor: '#000000',
-          backgroundColor: weatherColorMap[weather],
+          backgroundColor: weatherColorMap[weather]
         })
-      },
-      fail: res => {
-        console.log("error happen")
-        console.log(res)
+      },     
+      complete: () => {
+        callback && callback()
       }
     })
 
