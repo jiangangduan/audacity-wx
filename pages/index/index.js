@@ -19,7 +19,9 @@ Page({
     nowTemp: '14°',
     nowWeather: '阴天',
     nowWeatherBackground: "",
-    hourWeather: []
+    hourWeather: [],
+    todayTemp: "",
+    todayDate: ""
   },
   onPullDownRefresh(){
     this.getNow(() => {
@@ -59,6 +61,13 @@ Page({
       hourWeather: forecast
     })
   },
+  setToday(result) {
+    let date = new Date()
+    this.setData({
+       todayTemp: `${result.today.minTemp}° - ${result.today.maxTemp}°`,
+       todayDate: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} 今天`
+    })
+  },
   getNow(callback) {
     wx.request({
       url: 'https://test-miniprogram.com/api/weather/now',
@@ -68,7 +77,8 @@ Page({
       success: res => {
         let result = res.data.result
         this.setNow(result)
-        this.setHourWeather(result)      
+        this.setHourWeather(result)  
+        this.setToday(result)    
       },     
       complete: () => {
         callback && callback()
