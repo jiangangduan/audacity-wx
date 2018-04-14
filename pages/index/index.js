@@ -29,6 +29,36 @@ Page({
   onLoad() {
     this.getNow()
   },
+  setNow(result) {
+    let temp = result.now.temp
+    let weather = result.now.weather 
+    this.setData({
+      nowTemp: temp + '°',
+      nowWeather: weatherMap[weather],
+      nowWeatherBackground: '/images/' + weather + '-bg.png'
+    })
+
+    wx.setNavigationBarColor({
+      frontColor: '#000000',
+      backgroundColor: weatherColorMap[weather]
+    })
+  },
+  setHourWeather(result) {
+    let origin_forcast = result.forecast;
+    let forecast = []
+    let nowHour = new Date().getHours()
+    for (let i = 0; i < 24; i += 3) {
+      forecast.push({
+        time: (i + nowHour) % 24 + "时",
+        iconPath: '/images/' + origin_forcast[i / 3].weather + '-icon.png',
+        temp: origin_forcast[i / 3].temp + '°'
+      })
+    }
+    forecast[0].time = '现在'
+    this.setData({
+      hourWeather: forecast
+    })
+  },
   getNow(callback) {
     wx.request({
       url: 'https://test-miniprogram.com/api/weather/now',
@@ -37,39 +67,8 @@ Page({
       },
       success: res => {
         let result = res.data.result
-        let temp = result.now.temp
-        let weather = result.now.weather
-        console.log("----------------")
-        console.log(res.data)
-        console.log("----------------")
-        console.log(temp + "+" + weather)
-
-        let origin_forcast = result.forecast;
-
-        this.setData({
-          nowTemp: temp + '°',
-          nowWeather: weatherMap[weather],
-          nowWeatherBackground: '/images/' + weather + '-bg.png'
-        })
-
-        wx.setNavigationBarColor({
-          frontColor: '#000000',
-          backgroundColor: weatherColorMap[weather]
-        })
-
-        let forecast = []
-        let nowHour = new Date().getHours()
-        for (let i = 0; i < 24; i += 3) {
-          forecast.push({
-            time: (i + nowHour) % 24 + "时",
-            iconPath: '/images/' + origin_forcast[i / 3].weather + '-icon.png',
-            temp: origin_forcast[i / 3].temp + '°'
-          })
-        }
-        forecast[0].time = '现在'
-        this.setData({
-          hourWeather:forecast
-        })
+        this.setNow(result)
+        this.setHourWeather(result)      
       },     
       complete: () => {
         callback && callback()
