@@ -18,7 +18,8 @@ Page({
   data: {
     nowTemp: '14°',
     nowWeather: '阴天',
-    nowWeatherBackground: ""
+    nowWeatherBackground: "",
+    hourWeather: []
   },
   onPullDownRefresh(){
     this.getNow(() => {
@@ -39,7 +40,11 @@ Page({
         let temp = result.now.temp
         let weather = result.now.weather
         console.log("----------------")
+        console.log(res.data)
+        console.log("----------------")
         console.log(temp + "+" + weather)
+
+        let origin_forcast = result.forecast;
 
         this.setData({
           nowTemp: temp + '°',
@@ -50,6 +55,20 @@ Page({
         wx.setNavigationBarColor({
           frontColor: '#000000',
           backgroundColor: weatherColorMap[weather]
+        })
+
+        let forecast = []
+        let nowHour = new Date().getHours()
+        for (let i = 0; i < 24; i += 3) {
+          forecast.push({
+            time: (i + nowHour) % 24 + "时",
+            iconPath: '/images/' + origin_forcast[i / 3].weather + '-icon.png',
+            temp: origin_forcast[i / 3].temp + '°'
+          })
+        }
+        forecast[0].time = '现在'
+        this.setData({
+          hourWeather:forecast
         })
       },     
       complete: () => {
