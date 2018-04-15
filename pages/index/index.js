@@ -93,8 +93,10 @@ Page({
     })
   },
   onTapDayWeather() {
+    console.log("=== in index ===")
+    console.log(this.data.city)
     wx.navigateTo({
-      url: '/pages/list/list',
+      url: '/pages/list/list?city=' + this.data.city,
     })
   },
   onTapLocation() {
