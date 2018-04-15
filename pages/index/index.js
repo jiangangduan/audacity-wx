@@ -84,6 +84,10 @@ Page({
         callback && callback()
       }
     })
-
+  },
+  onTapDayWeather() {
+    wx.navigateTo({
+      url: '/pages/list/list',
+    })
   }
 })
